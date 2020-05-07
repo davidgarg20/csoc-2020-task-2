@@ -1,0 +1,32 @@
+{% extends "store/base.html" %}
+{% block content %}
+<div style="background-image :url('/static/images.jpg' );background-size: cover;background-repeat: no-repeat;padding-left: 40%;padding-top: 20%;padding-bottom: 20%;padding-right: 40%">
+<div class="jumbotron "  style="width: auto ; background-color: #89ABE3FF" >
+    <div id="login">
+        <h2> Login</h2>
+        <form class="form-horizontal" name="LoginForm" action="/login/" method="post">
+        {% csrf_token %}
+        <p >
+            <label  for="username">Username</label>
+                <input type="text" id="username" name="username"  placeholder="Username">
+        </p>
+        <p >
+            <label  for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Password">
+        </p>
+            <p id="error" style="color: red">{{ error }}</p>
+        <p>
+                <button type="submit" class="btn" >Login</button>
+
+        </p>
+
+        </form>
+    </div>
+</div>
+</div>
+   <script>
+       if("{{ message }}" !="none" )
+       $("#error").append("{{ message }}")
+   </script>
+
+{% endblock %}

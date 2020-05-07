@@ -20,8 +20,23 @@
     <dd>Rs. {{ book.mrp }}</dd>
     <dt>Available Copies:</dt>
     <dd>{{ num_available }}</dd>
+    {% if user.is_authenticated %}
+    {% if rating == '-1' %}
+    <dt> Rate</dt>
+    <dd> <input placeholder="Enter your rating" name="rating" id="rating" style="width: 150px;" type="number" min="0" max="10" /> <button type="submit" id="rating_button">Submit</button> </dd>
+    {% else %}
+    <div id="modrate" >
+        <div id="yourrating" >
+    <dt>Your Rating</dt>
+    <dd >{{ rating }} <p> <button id="mrating-button"> Modify Rating </button></p></dd>
+            </div>
+    </div>
+    {% endif %}
+     {% endif %}
 </dl>
+{% if user.is_authenticated %}
 <button class="btn btn-primary" id="loan-button">Loan {{ book.title }}</button>
+ {% endif %}
 <script>
 $("#loan-button").click(function(){
     $.ajax({
@@ -45,5 +60,65 @@ $("#loan-button").click(function(){
 
 	})
 })
+$("#mrating-button").click(function(){
+    $("#yourrating").remove()
+    $("#modrate").append('<dd> <input placeholder="Enter your rating" name="rating" id="modrating" style="width: 150px;" type="number" min="0" max="10"  required value="'+{{ rating }}+'"> <button type="submit" id="modrating_button">Modify</button> </dd>')
+    $("#modrating_button").click(function(){
+    ratingval = document.getElementById('modrating').value
+    if(!(ratingval>=0 & ratingval<=10) | ratingval == "")
+    alert("Rating value should be an integer between 0 to 10 (both inclusive) ")
+    else
+    { $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			rating : ratingval
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Book rating successfully modified");
+                window.location.replace("/book/{{book.id}}/");
+			}
+			else{
+				alert("Unable to issue this book");
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+
+	}) }
+	})
+})
+
+$("#rating_button").click(function(){
+    ratingval = document.getElementById('rating').value
+    if(ratingval<0 | ratingval>10 | ratingval == "")
+    alert("Rating value should be an integer between 0 to 10 (both inclusive) ")
+    else
+   { $.ajax({
+		url: "{% url 'rate-book' %}",
+		method: "POST",
+		data: {
+			bid: {{ book.id }},
+			rating : ratingval
+		},
+		success: function(data, status, xhr){
+			if(data['message'] == "success"){
+                alert("Book successfully rated");
+                window.location.replace("/book/{{book.id}}/");
+			}
+			else{
+				alert("Unable to issue this book");
+			}
+		},
+		error: function(xhr, status, err){
+			alert("Some error occured");
+		}
+
+	}) }
+})
+
 </script>
 {% endblock %}

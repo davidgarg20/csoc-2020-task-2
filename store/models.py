@@ -30,3 +30,8 @@ class BookCopy(models.Model):
         else:
             return f'{self.book.title} - Available'
 
+class Rating(models.Model):
+    book_id = models.IntegerField()
+    user_id = models.IntegerField()
+    rating = models.CharField(max_length=10,default='0')
+
